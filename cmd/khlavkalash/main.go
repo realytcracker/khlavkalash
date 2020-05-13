@@ -22,7 +22,7 @@ import (
 
 var verbose, help bool
 var port uint
-var mimetype, server, filename string
+var mimetype, server, filename, location string
 
 func main() {
 	fmt.Println(" __   ___  __   ___  ")
@@ -40,6 +40,7 @@ func main() {
 	flag.StringVar(&mimetype, "m", "image/jpeg", "mime type of your khlav kalash")
 	flag.StringVar(&server, "s", "nginx/1.17.10", "http server version header")
 	flag.StringVar(&filename, "f", "", "path to your khlav kalash")
+	flag.StringVar(&location, "l", "", "if set, 301 redirect to <parameter>, skip -f")
 
 	flag.Parse()
 
@@ -48,9 +49,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	if fileExists(filename) == false {
+	if fileExists(filename) == false && location != "" {
 		flag.PrintDefaults()
-		fmt.Println("please specify a file to serve with -f.")
+		fmt.Println("please specify a file to serve with -f, or use the -l option.")
 		os.Exit(1)
 	}
 
@@ -61,7 +62,11 @@ func main() {
 
 	fmt.Println("mime type: " + mimetype)
 	fmt.Println("server version header: " + server)
-	fmt.Println("filename: " + filename)
+	if location != "" {
+		fmt.Println("location: " + location)
+	} else {
+		fmt.Println("filename: " + filename)
+	}
 	fmt.Println("listening on port " + strconv.FormatUint(uint64(port), 10) + "...")
 
 	for {
@@ -75,13 +80,23 @@ func main() {
 
 // serveKhlavKalash serves the khlav kalash
 func serveKhlavKalash(conn net.Conn) {
+	// dunno why i keep date header
 	t := time.Now()
 
-	headers := "HTTP/1.1 200 OK\n"
-	headers += "Server: " + server + "\n"
-	headers += "Date: " + t.Format(time.RFC1123) + "\n"
-	headers += "Content-Type: " + mimetype + "\n"
-	headers += "Connection: keep-alive\n\n"
+	headers := ""
+
+	if location != "" {
+		headers += "HTTP/1.1 301 Moved Permanently\n"
+		headers += "Server: " + server + "\n"
+		headers += "Date: " + t.Format(time.RFC1123) + "\n"
+		headers += "Content-Type: " + mimetype + "\n"
+		headers += "Location: " + location + "\n\n"
+	} else {
+		headers += "HTTP/1.1 200 OK\n"
+		headers += "Server: " + server + "\n"
+		headers += "Date: " + t.Format(time.RFC1123) + "\n"
+		headers += "Content-Type: " + mimetype + "\n\n"
+	}
 
 	buf := make([]byte, 1024)
 	_, err := conn.Read(buf)
