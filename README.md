@@ -21,13 +21,15 @@ no pizza, only khlav kalash.
 |: | \  \ |: | \  \  
 (__|  \__)(__|  \__) 
   -f string
-    	path to your khlav kalash
-  -h	prints this helpful garbage
+        path to your khlav kalash
+  -h    prints this helpful garbage
+  -l string
+        if set, 301 redirect to <parameter>, skip -f
   -m string
-    	mime type of your khlav kalash (default "image/jpeg")
+        mime type of your khlav kalash (default "image/jpeg")
   -p uint
-    	port to serve khlav kalash on (80 may require root privs) (default 80)
+        port to serve khlav kalash on (80 may require root privs) (default 80)
   -s string
-    	http server version header (default "nginx/1.17.10")
-  -v	print incoming requests to stdout
+        http server version header (default "nginx/1.17.10")
+  -v    print incoming requests to stdout
 ```
