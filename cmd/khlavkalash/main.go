@@ -49,7 +49,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	if fileExists(filename) == false && location != "" {
+	if fileExists(filename) == false && location == "" {
 		flag.PrintDefaults()
 		fmt.Println("please specify a file to serve with -f, or use the -l option.")
 		os.Exit(1)
