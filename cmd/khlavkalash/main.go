@@ -60,12 +60,12 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	fmt.Println("mime type: " + mimetype)
 	fmt.Println("server version header: " + server)
 	if location != "" {
 		fmt.Println("location: " + location)
 	} else {
 		fmt.Println("filename: " + filename)
+		fmt.Println("mime type: " + mimetype)
 	}
 	fmt.Println("listening on port " + strconv.FormatUint(uint64(port), 10) + "...")
 
@@ -81,6 +81,7 @@ func main() {
 // serveKhlavKalash serves the khlav kalash
 func serveKhlavKalash(conn net.Conn) {
 	// dunno why i keep date header
+	// prob because rapper gotta know what time it is
 	t := time.Now()
 
 	headers := ""
