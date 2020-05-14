@@ -10,6 +10,7 @@ no pizza, only khlav kalash
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -100,14 +101,19 @@ func serveKhlavKalash(conn net.Conn) {
 	}
 
 	buf := make([]byte, 8192)
-	_, err := conn.Read(buf)
-	if err != nil {
-		fmt.Println("error:", err.Error())
-	} else if verbose == true {
-		fmt.Println("[" + conn.RemoteAddr().String() + "]: " + string(buf))
+	for {
+		_, err := conn.Read(buf)
+		if err != nil {
+			fmt.Println("error:", err.Error())
+		} else if verbose == true {
+			fmt.Println("[" + conn.RemoteAddr().String() + "]: " + string(buf))
+		}
+		if bytes.Contains(buf, []byte("\n\n")) || bytes.Contains(buf, []byte("\r\n\r\n")) {
+			break
+		}
 	}
 
-	f, err := ioutil.ReadFile(filename)
+	f, _ := ioutil.ReadFile(filename)
 
 	conn.Write([]byte(headers))
 	conn.Write(f)
