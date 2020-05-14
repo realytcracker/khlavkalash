@@ -100,7 +100,7 @@ func serveKhlavKalash(conn net.Conn) {
 		headers += "Content-Type: " + mimetype + "\n\n"
 	}
 
-	buf := make([]byte, 8192)
+	buf := make([]byte, 1024)
 	for {
 		_, err := conn.Read(buf)
 		if err != nil {
